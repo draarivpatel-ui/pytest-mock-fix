@@ -1,3 +1,4 @@
+import inspect
 import os
 import platform
 import re
@@ -540,6 +541,14 @@ class TestMockerStub:
 
     def test_async_stub_type(self, mocker: MockerFixture) -> None:
         assert isinstance(mocker.async_stub(), AsyncMock)
+
+    def test_stub_is_not_coroutine_function(self, mocker: MockerFixture) -> None:
+        # https://github.com/pytest-dev/pytest-mock/issues/375
+        assert not inspect.iscoroutinefunction(mocker.stub())
+
+    def test_async_stub_is_coroutine_function(self, mocker: MockerFixture) -> None:
+        # https://github.com/pytest-dev/pytest-mock/issues/375
+        assert inspect.iscoroutinefunction(mocker.async_stub())
 
 
 class TestSpy:

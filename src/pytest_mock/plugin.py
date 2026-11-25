@@ -264,9 +264,12 @@ class MockerFixture:
         :param name: the constructed stub's name as used in repr
         :return: Stub object.
         """
+        # A lambda spec makes MagicMock report __class__ as `function`, which
+        # causes inspect.iscoroutinefunction() to treat the stub as a coroutine
+        # function on Python 3.12+. Use an unbounded MagicMock instead.
         return cast(
             unittest.mock.MagicMock,
-            self.mock_module.MagicMock(spec=lambda *args, **kwargs: None, name=name),
+            self.mock_module.MagicMock(name=name),
         )
 
     def async_stub(self, name: str | None = None) -> AsyncMockType:
