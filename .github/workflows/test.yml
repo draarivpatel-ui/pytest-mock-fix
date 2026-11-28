@@ -32,7 +32,7 @@ jobs:
       - name: Install package without unhashpinned dependencies
         run: python -m pip install --no-deps --no-build-isolation -e .
       - name: Run pytest suite
-        run: python -m pytest tests --color=yes
+        run: python -m pytest tests --color=no
 
   package:
     name: package
