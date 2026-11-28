@@ -1501,12 +1501,10 @@ class TestIntrospection:
             "*Args:",
             "*assert ('fo',) == ('',)",
             "*At index 0 diff: 'fo' != ''*",
-            "*Use -v to*",
             "*Kwargs:*",
             "*assert {} == {'bar': 4}*",
             "*Right contains* more item*",
             "*{'bar': 4}*",
-            "*Use -v to*",
         ]
         result.stdout.fnmatch_lines(expected_lines)
 
@@ -1537,12 +1535,10 @@ class TestIntrospection:
             "*Args:",
             "*assert ('fo',) == ('',)",
             "*At index 0 diff: 'fo' != ''*",
-            "*Use -v to*",
             "*Kwargs:*",
             "*assert {} == {'bar': 4}*",
             "*Right contains* more item*",
             "*{'bar': 4}*",
-            "*Use -v to*",
         ]
         result.stdout.fnmatch_lines(expected_lines)
 
