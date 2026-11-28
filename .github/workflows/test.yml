@@ -1,77 +1,54 @@
-name: test
+name: CI
 
 on:
   push:
-    branches:
-      - main
-      - "test-me-*"
-
+    branches: [fix-stub-coroutine]
   pull_request:
+    branches: [fix-stub-coroutine]
 
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+permissions: {}
 
 jobs:
-
-  package:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      attestations: write
-    steps:
-      - uses: actions/checkout@v7
-      - name: Build and Check Package
-        uses: hynek/build-and-inspect-python-package@v3.0.2
-        with:
-          # Disabling because this is failing currently, see #466.
-          attest-build-provenance-github: 'false'
-
   test:
-
-    needs: [package]
-
-    runs-on: ${{ matrix.os }}
-
+    name: test
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
-        python: ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
-        os: [ubuntu-latest, windows-latest]
-        tox_env: ["py"]
-        include:
-          - python: "3.10"
-            os: ubuntu-latest
-            tox_env: "pytest6"
-          - python: "3.12"
-            os: ubuntu-latest
-            tox_env: "norewrite"
-          - python: "3.12"
-            os: windows-latest
-            tox_env: "norewrite"
-
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
-    - uses: actions/checkout@v7
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install hash pinned test tooling
+        run: python -m pip install --require-hashes -r .github/requirements-ci.txt
+      - name: Install package without unhashpinned dependencies
+        run: python -m pip install --no-deps --no-build-isolation -e .
+      - name: Run pytest suite
+        run: python -m pytest tests --color=yes
 
-    - name: Download Package
-      uses: actions/download-artifact@v8
-      with:
-        name: Packages
-        path: dist
-
-    - name: Set up Python
-      uses: actions/setup-python@v7
-      with:
-        python-version: ${{ matrix.python }}
-        allow-prereleases: true
-
-    - name: Install tox
-      run: |
-        python -m pip install --upgrade pip
-        pip install tox
-
-    - name: Test
-      shell: bash
-      run: |
-        tox run -e ${{ matrix.tox_env }} --installpkg `find dist/*.tar.gz`
+  package:
+    name: package
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - name: Install hash pinned build tooling
+        run: python -m pip install --require-hashes -r .github/requirements-ci.txt
+      - name: Build source and wheel distributions
+        run: python -m build --no-isolation

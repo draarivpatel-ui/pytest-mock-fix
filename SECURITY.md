@@ -1,8 +1,26 @@
-## Security contact information
+# Security policy
 
-This project is not used in production, so there should be no security concerns.
+## Reporting a vulnerability
 
-However as part of the Tidelift offering, the policy to report a security vulnerability is to use the
-[Tidelift security contact](https://tidelift.com/security).
+Use the private GitHub Security Advisory form at [Report a vulnerability](https://github.com/draarivpatel-ui/pytest-mock-fix/security/advisories/new). Do not open a public issue, pull request or discussion with exploit details.
 
-Tidelift will coordinate the fix and disclosure.
+Never include a live secret, token, cookie, private key or personal data in a report. Use synthetic values and redacted transcripts.
+
+## Supported versions
+
+| Version | Status |
+| --- | --- |
+| latest default branch | Supported |
+
+Security fixes are applied to the latest state of the default branch.
+
+## Scope
+
+This policy covers the pytest-mock plugin implementation, package metadata, test suite and repository automation. In scope are unsafe mock or patch behavior caused by this package, pytest plugin boundary confusion, credential or path exposure in test helpers and package build integrity failures. Vulnerabilities in pytest itself, Python, operating systems or caller-owned test suites are out of scope.
+
+## Coordinated disclosure
+
+- Acknowledgment within 3 business days.
+- Initial triage within 14 calendar days.
+- Fix or mitigation target within 90 calendar days for confirmed reports.
+- Public disclosure timing is coordinated with the reporter, normally within 90 days.
